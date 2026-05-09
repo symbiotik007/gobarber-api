@@ -7,6 +7,6 @@ export default {
     pass: process.env.MAIL_PASS,
   },
   default: {
-    from: 'Equipe GoBarber <jpedroschmitz@hotmail.com>',
+    from: `TROYA BARBER STUDIO <${process.env.MAIL_USER || 'noreply@troyabarber.com'}>`,
   },
 };

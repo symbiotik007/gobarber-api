@@ -1,0 +1,64 @@
+<h2 style="color: #1a1720; margin: 0 0 8px;">¡Tu reserva está confirmada! ✓</h2>
+<p style="color: #666; margin: 0 0 24px;">Hola <strong>{{customerName}}</strong>, tu cita en TROYA BARBER STUDIO ha sido confirmada.</p>
+
+<div style="background: #f9f9f9; border-radius: 10px; padding: 20px; margin-bottom: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px; width: 140px;">Servicio</td>
+      <td style="padding: 8px 0; font-weight: 600;">{{serviceName}}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px;">Barbero</td>
+      <td style="padding: 8px 0; font-weight: 600;">{{barberName}}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px;">Fecha</td>
+      <td style="padding: 8px 0; font-weight: 600;">{{date}}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px;">Hora</td>
+      <td style="padding: 8px 0; font-weight: 600;">{{time}}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px;">Anticipo pagado</td>
+      <td style="padding: 8px 0; font-weight: 600; color: #ff9000;">{{depositPaid}}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px;">Saldo el día de la cita</td>
+      <td style="padding: 8px 0; font-weight: 600;">{{balanceDue}}</td>
+    </tr>
+  </table>
+</div>
+
+<div style="background: #1a1720; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+  <span style="font-size: 20px;">📍</span>
+  <div>
+    <div style="color: #ff9000; font-weight: 600; font-size: 13px; margin-bottom: 2px;">Dirección</div>
+    <div style="color: #f4ede8; font-size: 14px;">Calle 18 #49-75, Pasto, Nariño</div>
+  </div>
+</div>
+
+<div style="background: #fff8f0; border: 1px solid #ffe0b2; border-radius: 10px; padding: 14px 16px; margin-bottom: 24px; font-size: 13px; color: #e65100;">
+  ⚠️ <strong>Política de anticipo:</strong> El anticipo pagado no es reembolsable. Si no puedes asistir, por favor cancela o reagenda con suficiente anticipación.
+</div>
+
+{{#if rescheduleUrl}}
+<div style="text-align: center; margin-bottom: 24px;">
+  <a href="{{rescheduleUrl}}"
+     style="display: inline-block; padding: 14px 28px; background: #ff9000; color: #1a1720; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">
+    Reagendar mi cita
+  </a>
+  <p style="font-size: 12px; color: #999; margin-top: 8px;">Disponible hasta {{rescheduleDeadline}}</p>
+</div>
+{{/if}}
+
+<div style="text-align: center;">
+  <a href="https://wa.me/{{whatsappNumber}}?text={{whatsappMessage}}"
+     style="display: inline-block; padding: 12px 24px; background: #25d366; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+    💬 Contactar por WhatsApp
+  </a>
+</div>
+
+<p style="font-size: 13px; color: #999; margin-top: 20px; text-align: center;">
+  Referencia de tu reserva: <strong style="font-family: monospace;">{{reference}}</strong>
+</p>

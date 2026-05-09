@@ -1,0 +1,30 @@
+<h2 style="color: #1a1720; margin: 0 0 8px;">Reserva cancelada</h2>
+<p style="color: #666; margin: 0 0 24px;">Hola <strong>{{customerName}}</strong>, tu cita en TROYA BARBER STUDIO ha sido cancelada.</p>
+
+<div style="background: #f9f9f9; border-radius: 10px; padding: 20px; margin-bottom: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px; width: 140px;">Servicio</td>
+      <td style="padding: 8px 0; font-weight: 600;">{{serviceName}}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px;">Fecha</td>
+      <td style="padding: 8px 0; font-weight: 600;">{{date}} a las {{time}}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #999; font-size: 13px;">Motivo</td>
+      <td style="padding: 8px 0;">{{reason}}</td>
+    </tr>
+  </table>
+</div>
+
+<div style="background: #fff3f3; border: 1px solid #ffcdd2; border-radius: 10px; padding: 14px 16px; margin-bottom: 24px; font-size: 13px; color: #c62828;">
+  ⚠️ El anticipo abonado <strong>no es reembolsable</strong> según nuestra política.
+</div>
+
+<div style="text-align: center;">
+  <a href="{{bookingUrl}}"
+     style="display: inline-block; padding: 14px 28px; background: #ff9000; color: #1a1720; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">
+    Hacer nueva reserva
+  </a>
+</div>

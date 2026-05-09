@@ -7,8 +7,11 @@ const jobs = [CancellationMail];
 class Queue {
   constructor() {
     this.queues = {};
+    this.enabled = !!process.env.REDIS_HOST;
 
-    this.init();
+    if (this.enabled) {
+      this.init();
+    }
   }
 
   init() {
@@ -23,13 +26,14 @@ class Queue {
   }
 
   add(queue, job) {
+    if (!this.enabled) return Promise.resolve();
     return this.queues[queue].bee.createJob(job).save();
   }
 
   processQueue() {
+    if (!this.enabled) return;
     jobs.forEach(job => {
       const { bee, handle } = this.queues[job.key];
-
       bee.on('failed', this.handleFailure).process(handle);
     });
   }
