@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import * as Yup from 'yup';
 import User from '../models/User';
 import File from '../models/File';
+import Booking, { BOOKING_STATUS } from '../models/Booking';
 
 class AdminUserController {
   async index(req, res) {
@@ -74,6 +75,19 @@ class AdminUserController {
 
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado.' });
+
+    const activeBookings = await Booking.count({
+      where: {
+        barber_id: user.id,
+        status: [BOOKING_STATUS.PENDING_PAYMENT, BOOKING_STATUS.CONFIRMED],
+      },
+    });
+
+    if (activeBookings > 0) {
+      return res.status(409).json({
+        error: `No se puede eliminar el usuario porque tiene ${activeBookings} cita(s) activa(s). Cancélalas primero.`,
+      });
+    }
 
     await user.destroy();
     return res.status(204).send();
