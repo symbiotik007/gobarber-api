@@ -28,34 +28,13 @@ const LEGACY_MIGRATIONS = [
   '20250509000011-add-branch-support.js',
 ];
 
-async function markLegacyMigrations(sequelize) {
-  // Check if the DB already has the bookings table (= legacy migrations were applied)
-  const [rows] = await sequelize.query(
-    `SELECT to_regclass('public.bookings') AS exists`
-  );
-  if (!rows[0]?.exists) return; // fresh DB, nothing to mark
-
-  // Ensure SequelizeMeta table exists
-  await sequelize.query(
-    `CREATE TABLE IF NOT EXISTS "SequelizeMeta" (name VARCHAR(255) NOT NULL PRIMARY KEY)`
-  );
-
-  for (const name of LEGACY_MIGRATIONS) {
-    await sequelize.query(
-      `INSERT INTO "SequelizeMeta" (name) VALUES (:name) ON CONFLICT DO NOTHING`,
-      { replacements: { name } }
-    );
-  }
-  logger.info('legacy_migrations_marked');
-}
-
 async function runMigrations() {
   const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
     ...dbConfig,
     logging: false,
   });
 
-  await markLegacyMigrations(sequelize);
+  const storage = new SequelizeStorage({ sequelize });
 
   const umzug = new Umzug({
     migrations: {
@@ -70,9 +49,22 @@ async function runMigrations() {
       },
     },
     context: sequelize.getQueryInterface(),
-    storage: new SequelizeStorage({ sequelize }),
+    storage,
     logger: { info: msg => logger.info('migration', { msg }), warn: () => {}, error: () => {} },
   });
+
+  // If the bookings table already exists the DB was seeded before umzug was
+  // introduced. Mark all legacy migrations as executed so umzug doesn't retry them.
+  const [rows] = await sequelize.query(`SELECT to_regclass('public.bookings') AS exists`);
+  if (rows[0]?.exists) {
+    const executed = await storage.executed();
+    for (const name of LEGACY_MIGRATIONS) {
+      if (!executed.includes(name)) {
+        await storage.logMigration({ name });
+      }
+    }
+    logger.info('legacy_migrations_marked');
+  }
 
   const pending = await umzug.pending();
   if (pending.length > 0) {
