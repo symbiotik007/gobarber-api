@@ -11,6 +11,7 @@ class Service extends Model {
         deposit_max: Sequelize.INTEGER,
         deposit_percentage_max: Sequelize.INTEGER,
         is_active: Sequelize.BOOLEAN,
+        barber_id: Sequelize.INTEGER,
       },
       { sequelize, underscored: true, tableName: 'services' }
     );
