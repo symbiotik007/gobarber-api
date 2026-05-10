@@ -20,6 +20,7 @@ import AdminBookingController from './app/controllers/AdminBookingController';
 import AdminSettingController from './app/controllers/AdminSettingController';
 import BranchController from './app/controllers/BranchController';
 import AdminServiceController from './app/controllers/AdminServiceController';
+import AdminUserController from './app/controllers/AdminUserController';
 
 import authMiddleware from './app/middlewares/auth';
 import idempotency from './app/middlewares/idempotency';
@@ -98,6 +99,12 @@ routes.put('/admin/services/:id', AdminServiceController.update);
 // ── Admin — configuración ─────────────────────────────────────────────────────
 routes.get('/admin/settings', AdminSettingController.index);
 routes.patch('/admin/settings', AdminSettingController.update);
+
+// ── Admin — usuarios / barberos ───────────────────────────────────────────────
+routes.get('/admin/users', AdminUserController.index);
+routes.post('/admin/users', AdminUserController.store);
+routes.put('/admin/users/:id', AdminUserController.update);
+routes.delete('/admin/users/:id', AdminUserController.destroy);
 
 // ── Admin — sucursales ────────────────────────────────────────────────────────
 routes.get('/admin/branches', BranchController.index);
