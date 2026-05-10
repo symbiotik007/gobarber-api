@@ -79,6 +79,9 @@ routes.put('/notifications/:id', NotificationController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
+// ── Reservas del cliente logueado ────────────────────────────────────────────
+routes.get('/my-bookings', BookingController.myBookings);
+
 // ── Admin — reservas del nuevo sistema ───────────────────────────────────────
 routes.get('/admin/bookings/stats', AdminBookingController.stats);
 routes.get('/admin/bookings/export', AdminBookingController.exportCsv);

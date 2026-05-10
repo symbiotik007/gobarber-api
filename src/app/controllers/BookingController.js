@@ -1,4 +1,5 @@
 import { body, validationResult } from 'express-validator';
+import { Op } from 'sequelize';
 import BookingService from '../services/BookingService';
 import Booking from '../models/Booking';
 import BookingStatusHistory from '../models/BookingStatusHistory';
@@ -125,6 +126,40 @@ class BookingController {
       payments: booking.payments,
       status_history: booking.status_history,
     });
+  }
+
+  async myBookings(req, res) {
+    const currentUser = await User.findByPk(req.userId, { attributes: ['email'] });
+    if (!currentUser) return res.status(401).json({ error: 'No autenticado.' });
+
+    const guests = await GuestCustomer.findAll({
+      where: { email: currentUser.email },
+      attributes: ['id'],
+    });
+
+    if (!guests.length) return res.json([]);
+
+    const guestIds = guests.map(g => g.id);
+
+    const bookings = await Booking.findAll({
+      where: { guest_customer_id: { [Op.in]: guestIds } },
+      include: [
+        { model: Service, as: 'service', attributes: ['id', 'name', 'duration_minutes', 'price'] },
+        { model: User, as: 'barber', attributes: ['id', 'name'] },
+      ],
+      order: [['date', 'DESC']],
+    });
+
+    return res.json(bookings.map(b => ({
+      id: b.id,
+      reference: b.reference,
+      status: b.status,
+      date: b.date,
+      deposit_amount: b.deposit_amount,
+      expires_at: b.expires_at,
+      service: b.service,
+      barber: b.barber,
+    })));
   }
 }
 
