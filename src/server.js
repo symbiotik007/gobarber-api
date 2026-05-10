@@ -7,11 +7,55 @@ import AnalyticsService from './app/services/AnalyticsService';
 import logger from './lib/logger';
 import dbConfig from './config/database';
 
+// Migrations that were applied before umzug was introduced.
+// If the DB already has these tables/columns, we mark them as executed
+// so umzug doesn't try to re-run them and fail with "already exists".
+const LEGACY_MIGRATIONS = [
+  '20190625203718-create-users.js',
+  '20190627121026-create-files.js',
+  '20190627122623-add-avatar-field-to-users.js',
+  '20190627132934-create-appointments.js',
+  '20250509000001-create-services.js',
+  '20250509000002-create-guest-customers.js',
+  '20250509000003-create-bookings.js',
+  '20250509000004-create-booking-status-history.js',
+  '20250509000005-create-payments.js',
+  '20250509000006-create-payment-attempts.js',
+  '20250509000007-create-payment-webhooks.js',
+  '20250509000008-create-availability-locks.js',
+  '20250509000009-create-booking-notifications.js',
+  '20250509000010-create-admin-settings.js',
+  '20250509000011-add-branch-support.js',
+];
+
+async function markLegacyMigrations(sequelize) {
+  // Check if the DB already has the bookings table (= legacy migrations were applied)
+  const [rows] = await sequelize.query(
+    `SELECT to_regclass('public.bookings') AS exists`
+  );
+  if (!rows[0]?.exists) return; // fresh DB, nothing to mark
+
+  // Ensure SequelizeMeta table exists
+  await sequelize.query(
+    `CREATE TABLE IF NOT EXISTS "SequelizeMeta" (name VARCHAR(255) NOT NULL PRIMARY KEY)`
+  );
+
+  for (const name of LEGACY_MIGRATIONS) {
+    await sequelize.query(
+      `INSERT INTO "SequelizeMeta" (name) VALUES (:name) ON CONFLICT DO NOTHING`,
+      { replacements: { name } }
+    );
+  }
+  logger.info('legacy_migrations_marked');
+}
+
 async function runMigrations() {
   const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
     ...dbConfig,
     logging: false,
   });
+
+  await markLegacyMigrations(sequelize);
 
   const umzug = new Umzug({
     migrations: {
