@@ -26,6 +26,8 @@ const LEGACY_MIGRATIONS = [
   '20250509000009-create-booking-notifications.js',
   '20250509000010-create-admin-settings.js',
   '20250509000011-add-branch-support.js',
+  '20250510000012-add-barber-id-to-services.js',
+  '20250510000013-seed-barber-services-assignment.js',
 ];
 
 async function runMigrations() {
